@@ -4,6 +4,8 @@ import { useProjectStore } from '@/stores/project';
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 const projectStore= useProjectStore()
+const selectedQuestionId=computed(() => projectStore.selectedQuestionId)
+const allQuestionLists=computed(() => projectStore.allQuestionLists)
 const selectedQuestionLists=computed(() => projectStore.selectedQuestionLists)
 const companyList=computed(() => projectStore.companyList)
 const DLDepartmentList=computed(() => projectStore.DLDepartmentList)
@@ -20,6 +22,7 @@ const KaihatsuEmployeeList=computed(() => projectStore.KaihatsuEmployeeList)
 const HosyuEmployeeList=computed(() => projectStore.HosyuEmployeeList)
 const SupportEmployeeList=computed(() => projectStore.SupportEmployeeList)
 const QAContents=computed(() => projectStore.QAContents)
+const QATheme=computed(() => projectStore.QATheme)
 const AnswerQA=computed(() => projectStore.AnswerQA)
 
 
@@ -42,7 +45,7 @@ projectStore.getSelectedQuestion()
       <v-card class="mx-auto px-6 py-8">
         <v-row >
           <v-col cols="2">回答日</v-col>
-          <v-col cols="4"> <v-date-input label="日付を選択" input-format="yyyy/mm/dd" v-model=projectStore.issueQADate></v-date-input></v-col>
+          <v-col cols="4"> <v-date-input label="日付を選択" input-format="yyyy/mm/dd" v-model=projectStore.answerDate></v-date-input></v-col>
         </v-row>
         <v-row>
           <v-col cols="2">回答希望者（任意）</v-col>
@@ -68,9 +71,15 @@ projectStore.getSelectedQuestion()
         </v-row>
         <v-row >
           <v-col cols="2">表題</v-col>
-          <v-col cols="7"><v-text-field label="表題を入力"></v-text-field></v-col>
+          <v-col cols="7"><v-text-field v-model="QATheme">{{allQuestionLists[`${selectedQuestionId}`].QATheme}}</v-text-field></v-col>
         </v-row>
         <v-row>
+          <v-card>
+            <v-col>
+              <v-card-text >From:{{allQuestionLists[`${selectedQuestionId}`].issuer}}</v-card-text>
+              <v-card-text >{{allQuestionLists[`${selectedQuestionId}`].QAcontents}}</v-card-text>
+            </v-col>
+          </v-card>
           <v-card>
             <v-col cols="10" v-for="selectedQuestionList in selectedQuestionLists" v-bind:key="selectedQuestionList">
               <v-card-text >From:{{selectedQuestionList.issuer}}</v-card-text>

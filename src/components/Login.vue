@@ -10,11 +10,9 @@ const message = computed(() => loginStore.message)
 
 <template>
   <v-app>
-    <v-container>
-      <v-row class="text-h4 mb-4" justify="center">ログイン</v-row>
-
-      <v-row justify="center">
-        <v-col cols="12" sm="6" md="4">
+    <v-container >
+      <v-row justify="center" >
+        <v-col cols="12" sm="6" md="4" >
           <v-card class="mx-auto px-6 py-8" max-width="344">
           <v-text-field v-model="loginStore.mailAddress" label="メールアドレス" outlined></v-text-field>
 

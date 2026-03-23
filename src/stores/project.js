@@ -16,11 +16,13 @@ export const useProjectStore = defineStore('project', {
   project:[],
   allQuestionLists:[],
   selectedQuestionId:0,
-  projectMemberList:[],
+  projectMemberLists:[],
   issueDate:ref(),
+  convertedIssueDate:(""),
   answerDeadDate:ref(),
+  convertedAnswerDeadDate:(""),
   respondent:(""),
-  respondentEmployeeNumber:0,
+  respondentEmployeeId:0,
   answerCompany:[],
   companyList:[],
   DLDepartmentList:["契約サービス部","保険金部","IT企画部"],
@@ -38,22 +40,24 @@ export const useProjectStore = defineStore('project', {
   QATheme:(""),
   QAContents:(""),
   selectedQuestionLists:[],
+  answerDate:ref(),
+  convertedAnswerDate:ref("")
   }),
 
   actions: {
 
 
     async getSelectedProject() {
-      const res =axios.get('/getSelectedProject')
+      const res =axios.get('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getSelectedProject')
       this.selectedProjectLists=await res.data.project
     },
     async getProject() {
-      const res =axios.get('/getProject')
+      const res =axios.get('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getProject')
       this.ProjectLists=await res.data.project
     },
 
     async addMemberToProject(){
-      axios.post('/addMemberToProject',{
+      axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/addMemberToProject',{
         projectId:this.project.projectId
       },)
     },
@@ -64,7 +68,7 @@ export const useProjectStore = defineStore('project', {
     },
 
    async getQuestion(){
-    const res =axios.post('/getQuestion',{
+    const res =axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getQuestion',{
       projectId:this.selectedProjectId
     })
     this.allQuestionLists=res.data
@@ -77,44 +81,56 @@ export const useProjectStore = defineStore('project', {
 
     //新規起票画面でプロジェクト参画者の情報を取得する関数
     async getgetProjectMember(){
-     const res=axios.post('/getProjectMember',{
+     const res=axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getProjectMember',{
       projectId:this.projectId
      })
-     this.projectMemberList=res.data
-     for(let i=0; i<this.projectMemberList.length;i++){
-      if(this.projectMemberList.companyId == 1){
-        if(this.projectMemberList.departmentId ==1)
-          this.projectMemberList.name.push(this.KeiyakuServiceEmployeeList)
-        else if(this.projectMemberList.departmentId ==2)
-          this.projectMemberList.name.push(this.HokenkinEmployeeList)
-        else if(this.projectMemberList.departmentId ==3)
-          this.projectMemberList.name.push(this.ITKikakuEmployeeList)
-      }else if(this.projectMemberList.companyId ==2){
-        if(this.projectMemberList.departmentId ==1)
-          this.this.projectMemberList.name.push(this.KiditsuEmployeeList)
-        else if(this.projectMemberList.departmentId ==2)
-          this.projectMemberList.name.push(this.HozenEmployeeList)
-        else if(this.projectMemberList.departmentId ==3)
-          this.projectMemberList.name.push(this.SyoumeiEmployeeList)
-     }else if(this.projectMemberList.companyId ==3){
-        if(this.projectMemberList.departmentId ==1)
-          this.projectMemberList.name.push(this.KaihatsuEmployeeList)
-        else if(this.projectMemberList.departmentId ==2)
-          this.projectMemberList.name.push(this.HosyuEmployeeList)
-        else if(this.projectMemberList.departmentId ==3)
-          this.projectMemberList.name.push(this.SupportEmployeeList)
+     this.projectMemberLists=res.data
+     for(let projectMemberList of this.projectMemberLists){
+      if(projectMemberList.companyId == 1){
+        if(projectMemberList.departmentId ==1)
+          projectMemberList.name.push(this.KeiyakuServiceEmployeeList)
+        else if(projectMemberList.departmentId ==2)
+          projectMemberList.name.push(this.HokenkinEmployeeList)
+        else if(projectMemberList.departmentId ==3)
+          projectMemberList.name.push(this.ITKikakuEmployeeList)
+      }else if(projectMemberList.companyId ==2){
+        if(projectMemberList.departmentId ==1)
+            projectMemberList.name.push(this.KiditsuEmployeeList)
+        else if(projectMemberList.departmentId ==2)
+          projectMemberList.name.push(this.HozenEmployeeList)
+        else if(projectMemberList.departmentId ==3)
+          projectMemberList.name.push(this.SyoumeiEmployeeList)
+     }else if(projectMemberList.companyId ==3){
+        if(projectMemberList.departmentId ==1)
+          projectMemberList.name.push(this.KaihatsuEmployeeList)
+        else if(projectMemberList.departmentId ==2)
+          projectMemberList.name.push(this.HosyuEmployeeList)
+        else if(projectMemberList.departmentId ==3)
+          projectMemberList.name.push(this.SupportEmployeeList)
         }
        }
      },
 
+    convertDate(dateObj){
+      if(!dateObj){
+        return"";}
+      else{
+        let y = dateObj.getFullYear();
+        let m = ('00' + (dateObj.getMonth()+1)).slice(-2);
+        let d = ('00' + dateObj.getDate()).slice(-2);
+        return (y + "-" + m + "-" + d);
+      }
+    },
+
      async issueQA(){
-    //画面から渡されたrespondent（社員番号＋氏名）から社員番号だけ取り出し、
-    // respondentEmployeeNumberに代入するロジックが入る予定
-     axios.post('/issueQA',{
+      this.convertedIssueDate =this.convertDate(this.issueDate)
+      this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate)
+    //バックエンドから渡されている社員IDをrespondentEmployeeIdに代入する
+     axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/issueQA',{
       projectId:this.selectedProjectList.ProjectId,
-      issueDate:this.issueDate,
+      issueDate:this.convertedIssueDate,
       answerDeadDate:this.answerDeadDate,
-      respondentEmployeeNumber:this.respondentEmployeeNumber,
+      respondentEmployeeId:this.respondentEmployeeId,
       QATheme:this.QATheme,
       QAContents:this.QAContents
      })
@@ -122,19 +138,21 @@ export const useProjectStore = defineStore('project', {
 
     //回答画面で選択された質問と、その質問の質問IDに紐づく回答IDを取得する関数
     async getSelectedQuestion(){
-      const res = axios.post('/getSelectedQuestion',{
-      projectId:this.selectedProjectList.ProjectId,
+      const res = axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getSelectedQuestion',{
       questionId:this.selectedQuestionId,
       })
       this.selectedQuestionLists=res.data
     },
 
     async AnswerQA(){
-      const res = axios.post('/answerQA',{
-      projectId:this.selectedProjectList.ProjectId,
-      issueDate:this.issueDate,
+      this.convertedAnswerDate =this.convertDate(this.answerDate)
+      this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate)
+      const res = axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/answerQA',{
+      questionId:this.this.selectedQuestionId,
+      answerDate:this.convertedAnswerDate,
       answerDeadDate:this.answerDeadDate ?? null,
-      respondentEmployeeNumber:this.respondentEmployeeNumber ?? null,
+      respondentEmployeeId:this.respondentEmployeeId ?? null,
+      QATheme:this.QATheme,
       QAContents:this.QAContents
       })
     }
