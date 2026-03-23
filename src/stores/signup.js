@@ -41,7 +41,7 @@ export const useSignUpStore = defineStore('signUp', {
       this.loading = true
       try {
         const res = await axios.post(
-          'https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/SignUp',
+          'https://https://backapp-serita-saisyu.m3harbor.net/api/api/SignUp',
           {
             id: this.userid,
             password: this.password,

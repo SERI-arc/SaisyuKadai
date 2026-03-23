@@ -48,16 +48,16 @@ export const useProjectStore = defineStore('project', {
 
 
     async getSelectedProject() {
-      const res =axios.get('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getSelectedProject')
+      const res =axios.get('https://https://backapp-serita-saisyu.m3harbor.net/api/getSelectedProject')
       this.selectedProjectLists=await res.data.project
     },
     async getProject() {
-      const res =axios.get('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getProject')
+      const res =axios.get('https://https://backapp-serita-saisyu.m3harbor.net/api/getProject')
       this.ProjectLists=await res.data.project
     },
 
     async addMemberToProject(){
-      axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/addMemberToProject',{
+      axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/addMemberToProject',{
         projectId:this.project.projectId
       },)
     },
@@ -68,7 +68,7 @@ export const useProjectStore = defineStore('project', {
     },
 
    async getQuestion(){
-    const res =axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getQuestion',{
+    const res =axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/getQuestion',{
       projectId:this.selectedProjectId
     })
     this.allQuestionLists=res.data
@@ -81,7 +81,7 @@ export const useProjectStore = defineStore('project', {
 
     //新規起票画面でプロジェクト参画者の情報を取得する関数
     async getgetProjectMember(){
-     const res=axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getProjectMember',{
+     const res=axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/getProjectMember',{
       projectId:this.projectId
      })
      this.projectMemberLists=res.data
@@ -126,7 +126,7 @@ export const useProjectStore = defineStore('project', {
       this.convertedIssueDate =this.convertDate(this.issueDate)
       this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate)
     //バックエンドから渡されている社員IDをrespondentEmployeeIdに代入する
-     axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/issueQA',{
+     axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/issueQA',{
       projectId:this.selectedProjectList.ProjectId,
       issueDate:this.convertedIssueDate,
       answerDeadDate:this.answerDeadDate,
@@ -138,7 +138,7 @@ export const useProjectStore = defineStore('project', {
 
     //回答画面で選択された質問と、その質問の質問IDに紐づく回答IDを取得する関数
     async getSelectedQuestion(){
-      const res = axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/getSelectedQuestion',{
+      const res = axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/getSelectedQuestion',{
       questionId:this.selectedQuestionId,
       })
       this.selectedQuestionLists=res.data
@@ -147,7 +147,7 @@ export const useProjectStore = defineStore('project', {
     async AnswerQA(){
       this.convertedAnswerDate =this.convertDate(this.answerDate)
       this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate)
-      const res = axios.post('https://m3h-serita-saisyukadai.livelyfield-07db6662.japaneast.azurecontainerapps.io/api/answerQA',{
+      const res = axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/answerQA',{
       questionId:this.this.selectedQuestionId,
       answerDate:this.convertedAnswerDate,
       answerDeadDate:this.answerDeadDate ?? null,
