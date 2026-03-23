@@ -6,6 +6,7 @@ import { RouterLink} from 'vue-router'
 const projectStore= useProjectStore()
 
 const selectedProjectLists = computed(() => projectStore.selectedProjectLists)
+const selectedProjectNum = computed(() => projectStore.selectedProjectNum)
 const moveToQAMenu = computed(() => projectStore.moveToQAMenu)
 
 onMounted(() => {
@@ -26,8 +27,9 @@ projectStore.getSelectedProject()
           <v-card variant="elevated" elevation="5" color="#FAFAFA" class="w-80" rounded="x1">
             <div class="d-flex ">
                <v-card color="#FAFAFA" variant="flat">
-                <v-card-text>案件名{{selectedProjectList.projectName}}</v-card-text>
-                <v-card-text >稼働日：{{selectedProjectList.operationStartDate}}</v-card-text>
+                <!--[]のなかは?.[selectedProjectNum]?.かも？-->
+                <v-card-text>案件名{{selectedProjectList?.[0]?.projectName}}</v-card-text>
+                <v-card-text >稼働日：{{selectedProjectList?.[0]?.operationStartDate}}</v-card-text>
                 <div class="d-flex justify-center">
                  <Router-link to="/QAMenu" class="Link"><v-btn @click="moveToQAMenu(`${selectedProjectList.ProjectId}`)">選択</v-btn></Router-link>
                 </div>

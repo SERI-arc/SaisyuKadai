@@ -1,5 +1,5 @@
 <script setup>
-import { computed,onMounted } from 'vue'
+import { computed,onMounted,watch } from 'vue'
 import { useSignUpStore } from '../stores/signup'
 
 const signUpStore = useSignUpStore()
@@ -9,16 +9,20 @@ const companyList = computed(() => signUpStore.companyList)
 const DepartmentList = computed(() => signUpStore.DepartmentList)
 
 const SignUpStore= useSignUpStore()
-const getCompany=computed(() => SignUpStore.getCompany)
-const getDepartment=computed(() => SignUpStore.getDepartment)
+//const getCompany=computed(() => SignUpStore.getCompany)
+//const getDepartment=computed(() => SignUpStore.getDepartment)
 
-/*onMounted(() => {
-getCompany()
-})*/
+watch(signUpStore.selectedCompanyId,()=>{
+  signUpStore.setDepartmentList()
+})
 
-/*onMounted(() => {
-getDepartment()
-})*/
+onMounted(() => {
+signUpStore.getCompany()
+})
+
+onMounted(() => {
+signUpStore.getDepartment()
+})
 
 </script>
 
@@ -32,7 +36,7 @@ getDepartment()
           <v-text-field v-model="signUpStore.name" label="入力してください" outlined></v-text-field>
           所属
           <v-row><v-col>会社<v-select :items="companyList" item-value="id" item-title="companyName" label="社名を選択" v-model="signUpStore.selectedCompanyId"></v-select></v-col></v-row>
-          <v-row><v-col>部署<v-select :items="DepartmentList" item-value="id" item-title="DepartmentName" label="社名を選択" v-model="signUpStore.selectedDepartmentId"></v-select></v-col></v-row>
+          <v-row><v-col>部署<v-select :items="DepartmentList" item-value="id" item-title="DepartmentName" label="部署を選択" v-model="signUpStore.selectedDepartmentId"></v-select></v-col></v-row>
           社員番号
           <v-text-field v-model="signUpStore.employeeNumber" label="入力してください" outlined></v-text-field>
           メールアドレス

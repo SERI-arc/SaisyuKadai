@@ -4,9 +4,9 @@ import { useProjectStore } from '@/stores/project';
 import { RouterLink} from 'vue-router'
 
 const projectStore= useProjectStore()
-const projectLists = computed(() => projectStore.projectLists)
 const addMemberToProject =computed(()=>projectStore.addMemberToProject)
-
+const searchedProjectList =computed(()=>projectStore.searchedProjectList)
+const searchProjectNum =computed(()=>projectStore.searchProjectNum)
 onMounted(() => {
 projectStore.getProject()
 })
@@ -21,14 +21,17 @@ projectStore.getProject()
       <v-container>
         <v-row justify="center">
           <v-col cols="6">
-            <v-select :items="projectLists" item-value="id" item-title="projectName" label="案件を選択してください" v-model="projectStore.project"></v-select>
+            <v-select :items="projectStore.projectLists"  item-title="projectName" label="案件を選択してください" v-model="projectStore.project"></v-select>
+          </v-col>
+          <v-col cols="3">
+            <v-btn @click="projectStore.searchProject">検索</v-btn>
           </v-col>
         </v-row>
         <v-row justify="center">
           <v-col cols="8">
             <v-card color="#FAFAFA" variant="flat" height="150px">
-              <v-card-text>案件名：{{ projectLists.projectName }}</v-card-text>
-              <v-card-text>稼働日：{{ projectLists.operationStartDate }}</v-card-text>
+              <v-card-text>案件名：{{ searchedProjectList?.[searchProjectNum]?.projectName }}</v-card-text>
+              <v-card-text>稼働日：{{ searchedProjectList?.[searchProjectNum]?.operationStartDate }}</v-card-text>
               <div class="d-flex justify-center">
                 <v-btn @click="addMemberToProject">追加</v-btn>
               </div>

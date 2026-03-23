@@ -53,6 +53,7 @@ export const useLoginStore = defineStore('login', {
      this.showOkButton = true
 
      window.location.href = '/home'
+
    } else {
      this.message = 'ログインに失敗しました。(Status: ' + res.status + ')'
      this.dialog = true

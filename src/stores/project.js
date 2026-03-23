@@ -5,18 +5,23 @@ import axios from 'axios'
 export const useProjectStore = defineStore('project', {
   state: () => ({
   selectedProjectLists:[],
+  selectedProjectNum:0,
   selectedProjectId:0,
-  projectLists:[{id:1,
+  projectLists:[],
+  projectNameLists:[],
+  searchedProjectList:[],
+ /* projectLists:[{id:1,
     projectName:"幸せものがたり",
     operationStartDate:2026/3/1,
   },{id:2,
     projectName:"幸せものがたり",
     operationStartDate:2026/3/1,
-  }],
-  project:[],
+  }],*/
+  project:ref(""),
   allQuestionLists:[],
   selectedQuestionId:0,
   projectMemberLists:[],
+  searchProjectNum:0,
   issueDate:ref(),
   convertedIssueDate:(""),
   answerDeadDate:ref(),
@@ -48,17 +53,33 @@ export const useProjectStore = defineStore('project', {
 
 
     async getSelectedProject() {
-      const res =axios.get('https://https://backapp-serita-saisyu.m3harbor.net/api/getSelectedProject')
-      this.selectedProjectLists=await res.data.project
+      const res =await  axios.get('https://backapp-serita-saisyu.m3harbor.net/api/getSelectedProject')
+      this.selectedProjectLists=res.data
+      this.selectedProjectNum =this.selectedProjectLists.length-1;
     },
     async getProject() {
-      const res =axios.get('https://https://backapp-serita-saisyu.m3harbor.net/api/getProject')
-      this.ProjectLists=await res.data.project
+      const res = await  axios.get('https://backapp-serita-saisyu.m3harbor.net/api/getProject')
+      console.log(res);
+      this.projectLists=res.data
+    },
+
+    searchProject(){
+      console.log(this.project);
+      console.log(this.projectLists);
+      this.searchProjectNum=0
+      for (let num =0 ; num<=this.projectLists.length; num ++){
+        if(this.projectLists?.[`${num}`]?.projectName == this.project){
+          this.searchedProjectList.push(this.projectLists[`${num}`]);
+        }
+      }
+      this.searchProjectNum =this.searchedProjectList.length-1;
+      console.log(this.searchProjectNum);
     },
 
     async addMemberToProject(){
-      axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/addMemberToProject',{
-        projectId:this.project.projectId
+      console.log(this.searchedProjectList[this.searchProjectNum].id)
+      axios.post('https://backapp-serita-saisyu.m3harbor.net/api/addMemberToProject',{
+        projectId:this.searchedProjectList[this.searchProjectNum].id
       },)
     },
 
@@ -68,8 +89,7 @@ export const useProjectStore = defineStore('project', {
     },
 
    async getQuestion(){
-    const res =axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/getQuestion',{
-      projectId:this.selectedProjectId
+    const res =axios.post('https://backapp-serita-saisyu.m3harbor.net/api/getQuestion',{
     })
     this.allQuestionLists=res.data
     },
@@ -81,7 +101,7 @@ export const useProjectStore = defineStore('project', {
 
     //新規起票画面でプロジェクト参画者の情報を取得する関数
     async getgetProjectMember(){
-     const res=axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/getProjectMember',{
+     const res=axios.post('https://backapp-serita-saisyu.m3harbor.net/api/getProjectMember',{
       projectId:this.projectId
      })
      this.projectMemberLists=res.data
@@ -126,7 +146,7 @@ export const useProjectStore = defineStore('project', {
       this.convertedIssueDate =this.convertDate(this.issueDate)
       this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate)
     //バックエンドから渡されている社員IDをrespondentEmployeeIdに代入する
-     axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/issueQA',{
+     axios.post('https://backapp-serita-saisyu.m3harbor.net/api/issueQA',{
       projectId:this.selectedProjectList.ProjectId,
       issueDate:this.convertedIssueDate,
       answerDeadDate:this.answerDeadDate,
@@ -138,7 +158,7 @@ export const useProjectStore = defineStore('project', {
 
     //回答画面で選択された質問と、その質問の質問IDに紐づく回答IDを取得する関数
     async getSelectedQuestion(){
-      const res = axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/getSelectedQuestion',{
+      const res = axios.post('https://backapp-serita-saisyu.m3harbor.net/api/getSelectedQuestion',{
       questionId:this.selectedQuestionId,
       })
       this.selectedQuestionLists=res.data
@@ -147,7 +167,7 @@ export const useProjectStore = defineStore('project', {
     async AnswerQA(){
       this.convertedAnswerDate =this.convertDate(this.answerDate)
       this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate)
-      const res = axios.post('https://https://backapp-serita-saisyu.m3harbor.net/api/answerQA',{
+      const res = axios.post('https://backapp-serita-saisyu.m3harbor.net/api/answerQA',{
       questionId:this.this.selectedQuestionId,
       answerDate:this.convertedAnswerDate,
       answerDeadDate:this.answerDeadDate ?? null,
