@@ -13,26 +13,19 @@ export const useSignUpStore = defineStore('signUp', {
     loading: ref(false),
     dialog: ref(false),
     message: ref(''),
-    companyList:[],
-    DLDepartmentList:[],
-    DLTXDepartmentList:[],
-    BPdepartmentList:[],
-   // companyList:[ { id: 1, companyName: "第一生命" }, { id: 2, companyName: "DLTX" }],
-   // DLDepartmentList:[{companyId:1,departmentId:1,departmentName:"契約サービス部"},{companyId:1,id:2, departmentName:"保険金部 "}],
-   // DLTXDepartmentList:[{companyId:2,departmentId:1,departmentName:"期日年金担当"},{companyId:2,id:2, departmentName:"保険金担当"}],
-   // BPdepartmentList:[{companyId:3,departmentId:1,departmentName:"開発本部 "},{companyId:3,id:2, departmentName:"保守部 "}],
-    selectedCompanyId:ref(),
+    companyList:ref(["第一生命","DLTX","BP"]),
+    DLDepartmentList: ref(["契約サービス部","保険金部","IT企画部"]),
+    DLTXDepartmentList: ref(["期日年金担当","保全担当","証明担当"]),
+    BPDepartmentList: ref(["開発部","保守運用部","サポート部"]),
+    selectedCompany:ref(),
     departmentLists:[],
     departmentList:[],
-    selectedDepartmentId:ref()
+    selectedDepartment:ref(),
+    selectedCompanyId:ref(),
+    selectedDepartmentId:ref(),
   }),
 
   actions: {
-    async getCompany(){
-      const res = axios.get('https://backapp-serita-saisyu.m3harbor.net/api/getAllCompanyId')
-      this.companyList=res.data
-      console.log(this.companyList)
-    },
 
         async getDepartment(){
       const res = axios.get('https://backapp-serita-saisyu.m3harbor.net/api/GetAllDepartmentId')
@@ -61,19 +54,52 @@ export const useSignUpStore = defineStore('signUp', {
     },
 
     async signUp() {
-      if (!this.userid || !this.password || !this.displayName) {
+      if ( !this.password || !this.selectedCompany || !this.selectedDepartment || !this.employeeNumber || !this.mailAddress) {
         this.message = 'すべての項目を入力してください。'
         this.dialog = true
         return
       }
       this.loading = true
       try {
+        if (this.selectedCompany === this.companyList[0]) {
+         this.selectedCompanyId = 1;
+         if (this.selectedDepartment === this.DLDepartmentList[0]) {
+          this.selectedDepartmentId = 1;
+         } else if (this.selectedDepartment === this.DLDepartmentList[1]) {
+          this.selectedDepartmentId = 2;
+         } else if (this.selectedDepartment === this.DLDepartmentList[2]) {
+          this.selectedDepartmentId = 3;
+         }
+        } else if (this.selectedCompany === this.companyList[1]) {
+          this.selectedCompanyId = 2;
+         if (this.selectedDepartment === this.DLTXDepartmentList[0]) {
+          this.selectedDepartmentId = 1;
+         } else if (this.selectedDepartment === this.DLTXDepartmentList[1]) {
+          this.selectedDepartmentId = 2;
+         } else if (this.selectedDepartment === this.DLTXDepartmentList[2]) {
+          this.selectedDepartmentId = 3;
+         }
+        } else if (this.selectedCompany === this.companyList[2]) {
+          this.selectedCompanyId = 3;
+         if (this.selectedDepartment === this.BPDepartmentList[0]) {
+          this.selectedDepartmentId = 1;
+         } else if (this.selectedDepartment === this.BPDepartmentList[1]) {
+          this.selectedDepartmentId = 2;
+         } else if (this.selectedDepartment === this.BPDepartmentList[2]) {
+          this.selectedDepartmentId = 3;
+         }
+        }
+        console.log(this.selectedDepartment);
+         console.log(this.selectedDepartmentId);
         const res = await axios.post(
           'https://backapp-serita-saisyu.m3harbor.net/api/SignUp',
           {
-            id: this.userid,
+            name: this.name,
+            employeeNumber:this.employeeNumber,
+            companyId:this.selectedCompanyId,
+            departmentId:this.selectedDepartmentId,
+            mailAddress:this.mailAddress,
             password: this.password,
-            name: this.displayName,
           },
           {
             withCredentials: true,
@@ -83,7 +109,7 @@ export const useSignUpStore = defineStore('signUp', {
         if (res.status === 200) {
           this.message = res.data.message
           this.dialog = true
-          setTimeout(() => (window.location.href = '/login'), 1000)
+          setTimeout(() => (window.location.href = '/'), 1000)
         } else {
           this.message = res.data.message || '登録に失敗しました。'
           this.dialog = true
@@ -99,3 +125,5 @@ export const useSignUpStore = defineStore('signUp', {
     },
   },
 })
+
+

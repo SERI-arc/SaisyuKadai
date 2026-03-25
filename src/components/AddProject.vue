@@ -31,7 +31,7 @@ projectStore.getProject()
           <v-col cols="8">
             <v-card color="#FAFAFA" variant="flat" height="150px">
               <v-card-text>案件名：{{ searchedProjectList?.[searchProjectNum]?.projectName }}</v-card-text>
-              <v-card-text>稼働日：{{ searchedProjectList?.[searchProjectNum]?.operationStartDate }}</v-card-text>
+              <v-card-text>稼働日：{{ searchedProjectList?.[searchProjectNum]?.operationStartDateConverted }}</v-card-text>
               <div class="d-flex justify-center">
                 <v-btn @click="addMemberToProject">追加</v-btn>
               </div>

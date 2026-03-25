@@ -4,13 +4,10 @@ import { useProjectStore } from '@/stores/project';
 import { VDateInput } from 'vuetify/labs/VDateInput'
 
 const projectStore= useProjectStore()
-const selectedQuestionId=computed(() => projectStore.selectedQuestionId)
-const allQuestionLists=computed(() => projectStore.allQuestionLists)
-const selectedQuestionLists=computed(() => projectStore.selectedQuestionLists)
+const selectedQuestionList=computed(() => projectStore.selectedQuestionList)
 const companyList=computed(() => projectStore.companyList)
 const DLDepartmentList=computed(() => projectStore.DLDepartmentList)
 const KeiyakuServiceEmployeeList=computed(() => projectStore.KeiyakuServiceEmployeeList)
-const answerCompany=computed(() => projectStore.answerCompany)
 const HokenkinEmployeeList=computed(() => projectStore.HokenkinEmployeeList)
 const ITKikakuEmployeeList=computed(() => projectStore.ITKikakuEmployeeList)
 const DLTXDepartmentList=computed(() => projectStore.DLTXDepartmentList)
@@ -21,20 +18,76 @@ const BPDepartmentList=computed(() => projectStore.BPDepartmentList)
 const KaihatsuEmployeeList=computed(() => projectStore.KaihatsuEmployeeList)
 const HosyuEmployeeList=computed(() => projectStore.HosyuEmployeeList)
 const SupportEmployeeList=computed(() => projectStore.SupportEmployeeList)
-const QAContents=computed(() => projectStore.QAContents)
-const QATheme=computed(() => projectStore.QATheme)
+const selectedAnswerLists=computed(() => projectStore.selectedAnswerLists)
 const AnswerQA=computed(() => projectStore.AnswerQA)
 
-
-
-onMounted(() => {
-projectStore.getProjectParticipants()
-})
 
 onMounted(() => {
 projectStore.getSelectedQuestion()
 })
 
+
+
+onMounted(() => {
+projectStore.getProjectMember()
+})
+
+const departmentList = computed(() => {
+
+  if (projectStore.answerCompany == companyList.value[0]) {
+    return DLDepartmentList.value
+  }
+
+  if (projectStore.answerCompany == companyList.value[1]) {
+    return DLTXDepartmentList.value
+  }
+
+  if (projectStore.answerCompany == companyList.value[2]) {
+    return BPDepartmentList.value
+  }
+
+  return []
+})
+
+const employeeList = computed(() => {
+  if (projectStore.answerDepartment == DLDepartmentList.value[0] ) {
+    return KeiyakuServiceEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == DLDepartmentList.value[1]) {
+    return HokenkinEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == DLDepartmentList.value[2]) {
+    return ITKikakuEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == DLTXDepartmentList.value[0]) {
+    return KiditsuEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == DLTXDepartmentList.value[1]) {
+    return HozenEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == DLTXDepartmentList.value[2]) {
+    return SyoumeiEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == BPDepartmentList.value[0]) {
+    return KaihatsuEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == BPDepartmentList.value[1]) {
+    return HosyuEmployeeList.value
+  }
+
+  if (projectStore.answerDepartment == BPDepartmentList.value[2]) {
+    return SupportEmployeeList.value
+  }
+
+  return []
+})
 
 
 </script>
@@ -43,63 +96,76 @@ projectStore.getSelectedQuestion()
     <v-main>
       <v-container>
       <v-card class="mx-auto px-6 py-8">
-        <v-row >
-          <v-col cols="2">回答日</v-col>
-          <v-col cols="4"> <v-date-input label="日付を選択" input-format="yyyy/mm/dd" v-model=projectStore.answerDate></v-date-input></v-col>
-        </v-row>
         <v-row>
-          <v-col cols="2">回答希望者（任意）</v-col>
+          <v-col cols="4">回答希望者（任意）</v-col>
         </v-row>
         <v-row>
          <v-col cols="2">社名</v-col>
-         <v-vol cols="4">
-          <v-select :items="companyList" label="社名を選択" v-model="answerCompany"></v-select>
-         </v-vol>
+         <v-col cols="4">
+          <v-select :items="companyList" label="社名を選択" v-model="projectStore.answerCompany" clearable></v-select>
+         </v-col>
+        </v-row>
+        <v-row>
          <v-col cols="2">部署名</v-col>
-         <v-vol cols="10">
-          <v-select :items="DLDepartmentList" label="部署を選択" v-if="answerCompany==companyList[0]"></v-select>
-         </v-vol>
+         <v-col cols="4">
+            <v-select :items="departmentList" label="部署名を選択" v-model="projectStore.answerDepartment" clearable></v-select>
+        </v-col>
         </v-row>
         <v-row>
           <v-col cols="2">氏名</v-col>
-          <v-vol cols="4"><v-select :items="projectLists" label="氏名を選択" v-model="projectStore.respondent"></v-select>
-         </v-vol>
+          <v-col cols="4">
+            <v-select :items="employeeList" label="氏名を選択" v-model="projectStore.respondent" clearable></v-select>
+          </v-col>
         </v-row>
-         <v-row >
+        <v-row>
           <v-col cols="2">回答期限（任意）</v-col>
           <v-col cols="4"> <v-date-input label="日付を選択" input-format="yyyy/mm/dd" v-model=projectStore.answerDeadDate></v-date-input></v-col>
         </v-row>
-        <v-row >
+        <v-row>
           <v-col cols="2">表題</v-col>
-          <v-col cols="7"><v-text-field v-model="QATheme">{{allQuestionLists[`${selectedQuestionId}`].QATheme}}</v-text-field></v-col>
+          <v-col cols="7"><v-text-field v-model="selectedQuestionList[0].QATheme"></v-text-field></v-col>
+        </v-row>
+        <v-row class="mb-6">
+            <v-col cols="12">
+             <v-card>
+              <v-card-text >From:  {{selectedQuestionList?.[0]?.issuerName}}</v-card-text>
+              <v-card-text >  {{ selectedQuestionList?.[0]?.QAContents}}</v-card-text>
+             </v-card>
+            </v-col>
         </v-row>
         <v-row>
-          <v-card>
-            <v-col>
-              <v-card-text >From:{{allQuestionLists[`${selectedQuestionId}`].issuer}}</v-card-text>
-              <v-card-text >{{allQuestionLists[`${selectedQuestionId}`].QAcontents}}</v-card-text>
+            <v-col class="mt-6" cols="12" v-for="selectedAnswerList in selectedAnswerLists" v-bind:key="selectedAnswerList">
+            <v-card >
+              <v-card-text >From:{{selectedAnswerList.answerEmployeeName}}</v-card-text>
+              <v-card-text >{{selectedAnswerList.QAContents}}</v-card-text>
+            </v-card>
             </v-col>
-          </v-card>
-          <v-card>
-            <v-col cols="10" v-for="selectedQuestionList in selectedQuestionLists" v-bind:key="selectedQuestionList">
-              <v-card-text >From:{{selectedQuestionList.issuer}}</v-card-text>
-              <v-card-text >{{selectedQuestionList.contents}}</v-card-text>
-            </v-col>
-          </v-card>
         </v-row>
         <v-row>
           <v-col>回答</v-col>
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="回答を入力してください" v-model="QAContents"></v-text-field>
+            <v-text-field label="回答を入力してください" v-model="projectStore.QAContents"></v-text-field>
           </v-col>
         </v-row>
         </v-card>
         <v-row justify="center">
-         <Router-link to="/QAMenu" class="Link"><v-btn class="ml-3" size="large" rounded="pill">戻る</v-btn></Router-link>
+         <Router-link to="/QAMenu" class="Link"><v-btn class="ml-3" size="large" rounded="pill" @click="projectStore.backtoQAMenu">戻る</v-btn></Router-link>
          <v-col cols="3"><v-btn class="ml-3" size="large" rounded="pill" @click="AnswerQA">回答する</v-btn></v-col>
         </v-row>
+        <v-dialog v-model="projectStore.dialog" max-width="400">
+        <v-card>
+            <v-card-title class="headline">メッセージ</v-card-title>
+            <v-card-text>{{ projectStore.message }}</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" variant="text" @click="projectStore.dialog = false">
+               閉じる
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>

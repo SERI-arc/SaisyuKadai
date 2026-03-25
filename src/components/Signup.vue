@@ -1,27 +1,37 @@
 <script setup>
-import { computed,onMounted,watch } from 'vue'
+import { computed,watch } from 'vue'
 import { useSignUpStore } from '../stores/signup'
 
 const signUpStore = useSignUpStore()
 const signUp = computed(() => signUpStore.signUp)
 const message = computed(() => signUpStore.message)
 const companyList = computed(() => signUpStore.companyList)
-const DepartmentList = computed(() => signUpStore.DepartmentList)
+const DLDepartmentList = computed(() => signUpStore.DLDepartmentList)
+const DLTXDepartmentList = computed(() => signUpStore.DLTXDepartmentList)
+const BPDepartmentList = computed(() => signUpStore.BPDepartmentList)
 
-const SignUpStore= useSignUpStore()
-//const getCompany=computed(() => SignUpStore.getCompany)
-//const getDepartment=computed(() => SignUpStore.getDepartment)
 
 watch(signUpStore.selectedCompanyId,()=>{
   signUpStore.setDepartmentList()
 })
 
-onMounted(() => {
-signUpStore.getCompany()
-})
 
-onMounted(() => {
-signUpStore.getDepartment()
+
+const departmentList = computed(() => {
+
+  if (signUpStore.selectedCompany == companyList.value[0]) {
+    return DLDepartmentList.value
+  }
+
+  if (signUpStore.selectedCompany == companyList.value[1]) {
+    return DLTXDepartmentList.value
+  }
+
+  if (signUpStore.selectedCompany == companyList.value[2]) {
+    return BPDepartmentList.value
+  }
+
+  return []
 })
 
 </script>
@@ -35,8 +45,8 @@ signUpStore.getDepartment()
           氏名
           <v-text-field v-model="signUpStore.name" label="入力してください" outlined></v-text-field>
           所属
-          <v-row><v-col>会社<v-select :items="companyList" item-value="id" item-title="companyName" label="社名を選択" v-model="signUpStore.selectedCompanyId"></v-select></v-col></v-row>
-          <v-row><v-col>部署<v-select :items="DepartmentList" item-value="id" item-title="DepartmentName" label="部署を選択" v-model="signUpStore.selectedDepartmentId"></v-select></v-col></v-row>
+          <v-row><v-col>会社<v-select :items="companyList" item-title="companyName" label="社名を選択" v-model="signUpStore.selectedCompany"></v-select></v-col></v-row>
+          <v-row><v-col>部署<v-select :items="departmentList"  item-title="DepartmentName" label="部署を選択" v-model="signUpStore.selectedDepartment"></v-select></v-col></v-row>
           社員番号
           <v-text-field v-model="signUpStore.employeeNumber" label="入力してください" outlined></v-text-field>
           メールアドレス
