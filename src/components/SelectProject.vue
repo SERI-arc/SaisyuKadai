@@ -13,6 +13,11 @@ onMounted(() => {
 projectStore.getSelectedProject()
 })
 
+const headers =[
+    { title: "案件名", value: "projectName" },
+    { title: "稼働日", value: "operationStartDateFormatted" },
+    { title: '', key: 'actions', sortable: false }
+]
 
 </script>
 
@@ -21,27 +26,22 @@ projectStore.getSelectedProject()
   <v-app>
     <v-main>
       <v-container>
-        <v-row>
-          <v-col cols="4" v-for="selectedProjectList in selectedProjectLists" v-bind:key="selectedProjectList">
-          <v-row >
-          <v-card variant="elevated" elevation="5" color="#FAFAFA" rounded="x1" class="projectCard">
-            <div class="d-flex ">
-               <v-card color="#FAFAFA" variant="flat" >
-                <v-card-text>案件名:{{selectedProjectList.projectName}}</v-card-text>
-                <v-card-text >稼働日：{{selectedProjectList.operationStartDateFormatted}}</v-card-text>
-                <div class="d-flex justify-center">
-                 <Router-link to="/QAMenu" class="Link"><v-btn @click="moveToQAMenu(`${selectedProjectList.id}`)">選択</v-btn></Router-link>
-                </div>
-              </v-card>
-            </div>
-          </v-card>
-         </v-row>
-        </v-col>
-        </v-row>
-        <v-row justify="center">
-          <Router-link to="/home" class="Link"><v-btn class="ml-3" size="large" rounded="pill">戻る</v-btn></Router-link>
-          <Router-link to="/addProject" class="Link"><v-btn class="ml-3" size="large" rounded="pill">案件追加</v-btn></Router-link>
-        </v-row>
+        <v-data-table
+            :headers="headers"
+            :items="selectedProjectLists"
+            item-key="id" items-per-page="10"
+            @clickRow="projectStore.moveToQuestion"
+        >
+          <template v-slot:[`item.actions`]="{ item }">
+            <Router-link to="/QAMenu" class="Link">
+              <v-btn size="small"
+                color="primary"
+                @click="moveToQAMenu(`${item.id}`)">
+               選択する
+             </v-btn>
+           </Router-link>
+         </template>
+       </v-data-table>
       </v-container>
     </v-main>
   </v-app>
@@ -52,7 +52,7 @@ projectStore.getSelectedProject()
 
 .projectCard{
   width:900px;
-  height:180px;
+  height:200px;
 }
 
 </style>

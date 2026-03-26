@@ -19,11 +19,11 @@ projectStore.getProject()
   <v-app>
     <v-main>
       <v-container>
-        <v-row justify="center">
+        <v-row justify="center" align="center">
           <v-col cols="6">
             <v-select :items="projectStore.projectLists"  item-title="projectName" label="案件を選択してください" v-model="projectStore.project"></v-select>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-btn @click="projectStore.searchProject">検索</v-btn>
           </v-col>
         </v-row>
@@ -39,10 +39,21 @@ projectStore.getProject()
           </v-col>
 
         </v-row>
-        <v-row justify="center">
-          <Router-link to="/SelectProject" class="Link"><v-btn class="ml-3" size="large" rounded="pill">戻る</v-btn></Router-link>
+        <v-row justify="center" class="btn">
+          <Router-link to="/SelectProject" class="Link"><v-btn size="large" rounded="pill">戻る</v-btn></Router-link>
         </v-row>
       </v-container>
     </v-main>
   </v-app>
+
+
 </template>
+<style scoped>
+
+.btn{
+  padding-top:1rem ;
+}
+
+
+</style>
+

@@ -10,16 +10,11 @@
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: rgb(77, 87, 83);
   transition: 0.4s;
   padding: 3px;
 }
 
-
-  body {
-    display: flex;
-    place-items: center;
-  }
 
 
   #app {
@@ -32,7 +27,7 @@ a,
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color: hsla(0, 3%, 72%, 0.507);
   }
 }
 

@@ -9,6 +9,7 @@ import vuetify from './plugins/vuetify' // vuetifyのインポート
 import '@mdi/font/css/materialdesignicons.css' // mdiアイコンのCSS読み込み
 import axios from "axios"
 
+
 const app = createApp(App)
 
 axios.defaults.withCredentials = true

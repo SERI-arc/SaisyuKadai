@@ -11,6 +11,16 @@ onMounted(() => {
 projectStore.getQuestion()
 })
 
+const headers =[
+    { title: "表題", value: "QATheme" },
+    { title: "起票者", value: "issuerName" },
+    { title: "起票日", value: "issueDateFormatted" },
+    { title: "回答期日", value: "answerDeadDateFormatted"},
+    { title: "回答依頼先", value: "respondentEmployeeName" },
+    { title: '', key: 'actions', sortable: false }
+]
+
+
 
 </script>
 
@@ -19,29 +29,31 @@ projectStore.getQuestion()
   <v-app>
     <v-main>
       <v-container>
-        <v-row>
-          <v-col cols="4" v-for="allQuestionList in allQuestionLists" v-bind:key="allQuestionList">
-            <v-row dense align="center" justify="center">
-              <v-card color="#FAFAFA" variant="flat" class="questionCard" align="center" justify="center">
-                <v-card-text >表題:{{allQuestionList.QATheme}}</v-card-text>
-                <v-card-text >起票日:{{allQuestionList.issueDateFormatted}}</v-card-text>
-                <v-card-text >起票者:{{allQuestionList.issuerName}}</v-card-text>
-                <v-card-text >回答依頼先：{{allQuestionList.respondentEmployeeName}}</v-card-text>
-                <div class="d-flex justify-center">
-                  <Router-link to="/AnswerQA" class="Link"><v-btn @click="projectStore.moveToQuestion(`${allQuestionList.id}`)" >選択</v-btn></Router-link>
-                </div>
-              </v-card>
-            </v-row>
-          </v-col>
-        </v-row>
-        <div class="d-flex justify-center">
+        <v-data-table
+            :headers="headers"
+            :items="allQuestionLists"
+            item-key="id" items-per-page="10"
+            @clickRow="projectStore.moveToQuestion"
+        >
+          <template v-slot:[`item.actions`]="{ item }">
+            <Router-link to="/AnswerQA" class="Link">
+              <v-btn size="small"
+                color="primary"
+                @click="projectStore.moveToQuestion(`${item.id}`)">
+               回答する
+             </v-btn>
+           </Router-link>
+         </template>
+       </v-data-table>
+       <div class="d-flex justify-center">
           <Router-link to="/selectProject" class="Link"><v-btn class="ml-3" size="large" rounded="pill">戻る</v-btn></Router-link>
-          <Router-link to="/IssueQA" class="Link"><v-btn>新規起票</v-btn></Router-link>
-        </div>
-      </v-container>
-    </v-main>
-  </v-app>
+         </div>
+    </v-container>
+   </v-main>
+ </v-app>
 </template>
+
+
 
 <style scoped>
 

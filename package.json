@@ -13,7 +13,9 @@
     "format": "oxfmt src/"
   },
   "dependencies": {
+    "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/font": "^7.4.47",
+    "@mdi/js": "^7.4.47",
     "axios": "^1.13.6",
     "moment": "^2.30.1",
     "pinia": "^3.0.4",

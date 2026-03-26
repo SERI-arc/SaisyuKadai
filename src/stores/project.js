@@ -121,8 +121,10 @@ export const useProjectStore = defineStore('project', {
     this.allQuestionListsBeforeConverted=res.data
     console.log(this.allQuestionListsBeforeConverted);
     for(let num =0; num<this.allQuestionListsBeforeConverted.length; num++){
-        const originalDate = this.allQuestionListsBeforeConverted[num].issueDate;
-        this.allQuestionListsBeforeConverted[num].issueDateFormatted = this.convertDateToSlash(originalDate);this.convertDateToSlash(this.allQuestionListsBeforeConverted[num].issueDate);
+        const originalIssueDate = this.allQuestionListsBeforeConverted[num].issueDate;
+        this.allQuestionListsBeforeConverted[num].issueDateFormatted = this.convertDateToSlash(originalIssueDate);
+        const originalAnswerDeadDate = this.allQuestionListsBeforeConverted[num].answerDeadDate;
+        this.allQuestionListsBeforeConverted[num].answerDeadDateFormatted = this.convertDateToSlash(originalAnswerDeadDate);
       }
       this.allQuestionLists = this.allQuestionListsBeforeConverted;
       console.log(this.allQuestionLists);

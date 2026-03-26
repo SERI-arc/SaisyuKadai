@@ -94,8 +94,8 @@ const employeeList = computed(() => {
 <template>
   <v-app>
     <v-main>
-      <v-container>
-      <v-card class="mx-auto px-6 py-8">
+      <v-container >
+      <v-card class="mx-auto px-6 py-8 mb-6">
         <v-row>
           <v-col cols="4">回答希望者（任意）</v-col>
         </v-row>
@@ -125,35 +125,43 @@ const employeeList = computed(() => {
           <v-col cols="2">表題</v-col>
           <v-col cols="7"><v-text-field v-model="selectedQuestionList[0].QATheme"></v-text-field></v-col>
         </v-row>
-        <v-row class="mb-6">
+        <v-row>
             <v-col cols="12">
              <v-card>
-              <v-card-text >From:  {{selectedQuestionList?.[0]?.issuerName}}</v-card-text>
+              <v-card-text >起票者: {{selectedQuestionList?.[0]?.issuerName}}</v-card-text>
               <v-card-text >  {{ selectedQuestionList?.[0]?.QAContents}}</v-card-text>
              </v-card>
             </v-col>
         </v-row>
-        <v-row>
+        <div class="answer">
+         <v-row>
             <v-col class="mt-6" cols="12" v-for="selectedAnswerList in selectedAnswerLists" v-bind:key="selectedAnswerList">
             <v-card >
-              <v-card-text >From:{{selectedAnswerList.answerEmployeeName}}</v-card-text>
+              <v-card-text >回答者: {{selectedAnswerList.answerEmployeeName}}</v-card-text>
               <v-card-text >{{selectedAnswerList.QAContents}}</v-card-text>
             </v-card>
             </v-col>
-        </v-row>
+          </v-row>
+        </div>
         <v-row>
           <v-col>回答</v-col>
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="回答を入力してください" v-model="projectStore.QAContents"></v-text-field>
+          <v-textarea label="回答を入力してください" v-model="projectStore.QAContents"  rows="4"></v-textarea>
           </v-col>
         </v-row>
         </v-card>
-        <v-row justify="center">
-         <Router-link to="/QAMenu" class="Link"><v-btn class="ml-3" size="large" rounded="pill" @click="projectStore.backtoQAMenu">戻る</v-btn></Router-link>
-         <v-col cols="3"><v-btn class="ml-3" size="large" rounded="pill" @click="AnswerQA">回答する</v-btn></v-col>
+        <div class="btn">
+        <v-row justify="center" align="center" >
+         <v-col cols="3" class="d-flex justify-center">
+          <Router-link to="/QAMenu" class="Link"><v-btn  size="large" rounded="pill" @click="projectStore.backtoQAMenu">戻る</v-btn></Router-link>
+         </v-col>
+         <v-col cols="3" class="d-flex justify-center">
+          <v-btn  size="large" rounded="pill" @click="AnswerQA">回答する</v-btn>
+        </v-col>
         </v-row>
+        </div>
         <v-dialog v-model="projectStore.dialog" max-width="400">
         <v-card>
             <v-card-title class="headline">メッセージ</v-card-title>
@@ -170,3 +178,14 @@ const employeeList = computed(() => {
     </v-main>
   </v-app>
 </template>
+<style scoped>
+
+.answer{
+ padding-top:2rem;
+}
+
+.btn{
+  padding-top:1rem ;
+}
+
+</style>
