@@ -54,6 +54,7 @@ export const useProjectStore = defineStore('project', {
   answerDepartment:ref(),
   message:ref(),
   dialog:ref(false),
+
   }),
 
   actions: {
@@ -269,6 +270,7 @@ export const useProjectStore = defineStore('project', {
       if (this.respondent !=""){
           this.respondentEmployeeId=this.projectMemberLists.find(m => m.name === this.respondent)?.id;
       }
+      this.isLoading=true;
       const res =await  axios.post('https://backapp-serita-saisyu.m3harbor.net/api/answerQA',{
       questionId:this.selectedQuestionId,
       answerDate:this.answerDate,

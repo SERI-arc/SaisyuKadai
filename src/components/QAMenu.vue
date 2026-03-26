@@ -29,6 +29,7 @@ const headers =[
   <v-app>
     <v-main>
       <v-container>
+        <v-card>
         <v-data-table
             :headers="headers"
             :items="allQuestionLists"
@@ -39,12 +40,14 @@ const headers =[
             <Router-link to="/AnswerQA" class="Link">
               <v-btn size="small"
                 color="primary"
+
                 @click="projectStore.moveToQuestion(`${item.id}`)">
                回答する
              </v-btn>
            </Router-link>
          </template>
        </v-data-table>
+      </v-card>
        <div class="d-flex justify-center">
           <Router-link to="/selectProject" class="Link"><v-btn class="ml-3" size="large" rounded="pill">戻る</v-btn></Router-link>
          </div>

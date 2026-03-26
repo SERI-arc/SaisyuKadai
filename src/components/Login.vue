@@ -50,7 +50,7 @@ const message = computed(() => loginStore.message)
           <v-card-text>{{ message }}</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" variant="text" v-if="showOkButton" to="/home"> OK </v-btn>
+            <v-btn color="primary" variant="text" v-if="showOkButton" to="/SelectProject"> OK </v-btn>
             <v-btn color="grey" variant="text" @click="loginStore.dialog = false"> 閉じる </v-btn>
           </v-card-actions>
         </v-card>

@@ -134,10 +134,12 @@ watch(()=>projectStore.answerCompany,()=>{
           </v-col>
         </v-row>
         </v-card>
+        <div class="btn">
         <v-row justify="center">
          <Router-link to="/QAMenu" class="Link"><v-btn class="ml-3" size="large" rounded="pill" @click="projectStore.backtoQAMenu">戻る</v-btn></Router-link>
          <v-col cols="3"><v-btn class="ml-3" size="large" rounded="pill" @click="issueQA">起票する</v-btn></v-col>
         </v-row>
+        </div>
         <v-dialog v-model="projectStore.dialog" max-width="400">
         <v-card>
             <v-card-title class="headline">メッセージ</v-card-title>
@@ -154,3 +156,13 @@ watch(()=>projectStore.answerCompany,()=>{
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+
+
+
+.btn{
+  padding-top:1rem ;
+}
+
+</style>
