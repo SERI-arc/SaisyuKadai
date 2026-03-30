@@ -54,8 +54,15 @@ export const useProjectStore = defineStore('project', {
   answerDepartment:ref(),
   message:ref(),
   dialog:ref(false),
-
+  selectedAnswerListFlag:ref(false),
+  errorMessage:ref(),
+  resultMessage:ref(),
+  errorDialog:ref(false),
+  operationStartProject:0,
+  addProjectDialog:ref(false),
+  addProjectDialogMessage:ref()
   }),
+
 
   actions: {
 
@@ -67,19 +74,38 @@ export const useProjectStore = defineStore('project', {
         const originalDate = this.selectedProjectListsBeforConverted[num].operationStartDate;
         this.selectedProjectListsBeforConverted[num].operationStartDateFormatted = this.convertDateToSlash(originalDate);
       }
-      this.selectedProjectLists = this.selectedProjectListsBeforConverted;
-      console.log(this.selectedProjectLists);
-      this.selectedProjectNum =this.selectedProjectLists.length-1;
+        this.selectedProjectLists = this.selectedProjectListsBeforConverted;
+       console.log(this.selectedProjectLists);
+        this.selectedProjectNum =this.selectedProjectLists.length-1;
+        this.operationStartProject=0;
+        const Date=this.getDate();
+      for(let num=0; num<this.selectedProjectLists.length ; num++){
+          const selectedProjectOperationStartMonth =this.getMonth(this.selectedProjectLists?.[`${num}`]?.operationStartDateFormatted);
+          const month = this.getMonth(Date);
+          console.log(month);
+        if(month == selectedProjectOperationStartMonth){
+         this.operationStartProject++;
+        }
+      }
     },
 
-    convertDateToSlash(dateStr) {
+    getMonth(dateStr) {
      if (!dateStr) return "";
+       const dateObj = new Date(dateStr);
+       const m = ('00' + (dateObj.getMonth()+1)).slice(-2);
+     return m;
+    },
+
+    convertDateToSlash(dateStr){
+      if (!dateStr) return "";
        const dateObj = new Date(dateStr);
        const y = dateObj.getFullYear();
        const m = ('00' + (dateObj.getMonth()+1)).slice(-2);
        const d = ('00' + dateObj.getDate()).slice(-2);
     return `${y}/${m}/${d}`;
     },
+
+
 
     async getProject() {
       const res = await  axios.get('https://backapp-serita-saisyu.m3harbor.net/api/getProject')
@@ -104,9 +130,18 @@ export const useProjectStore = defineStore('project', {
 
     async addMemberToProject(){
       console.log(this.searchedProjectList[this.searchProjectNum].id)
-      axios.post('https://backapp-serita-saisyu.m3harbor.net/api/addMemberToProject',{
+      const res = await axios.post('https://backapp-serita-saisyu.m3harbor.net/api/addMemberToProject',{
         projectId:this.searchedProjectList[this.searchProjectNum].id
       },)
+       if(res.status == 200 ){
+        this.addProjectDialogMessage = "案件を追加しました。";
+        this.addProjectDialog  = true;
+
+      }else{
+        this.addProjectDialogMessage = "案件を追加できませんでした。管理者にお問い合わせください。";
+        this.addProjectDialog  = true;
+      }
+
     },
 
     //QAメニューに遷移する際に、選択されたプロジェクトのIDを保持するための関数
@@ -197,31 +232,26 @@ export const useProjectStore = defineStore('project', {
     },
 
      async issueQA(){
-      if(this.respondent == ""){
-        this.message ='回答希望者を設定してください。';
-        this.dialog=true;
-      }else if(this.QATheme ==""){
-        this.message ='表題を設定してください。';
-        this.dialog=true;
-      }else if(this.QAContents == ""){
-        this.message ='質問内容を設定してください。';
-        this.dialog=true;
-      }
-
       this.issueDate=this.getDate();
-      if(this.answerDeadDate == null){
-        this.message ='回答期限を設定してください。';
-        this.dialog=true;
+      if(this.respondent == ""){
+        this.errorMessage ='回答希望者を設定してください。';
+        this.errorDialog=true;
+        }else if(this.answerDeadDate == null){
+        this.errorMessage ='回答期限を設定してください。';
+        this.errorDialog=true;
       }else if(this.answerDeadDate < this.issueDate){
-        this.message ='回答期限を本日以降に設定してください。';
-        this.dialog=true;
-      }else{
-        this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate);
-      }
-
-      if (this.respondent !=""){
-          this.respondentEmployeeId=this.projectMemberLists.find(m => m.name === this.respondent)?.id;
-      }
+        this.errorMessage ='回答期限を本日以降に設定してください。';
+        this.errorDialog=true;
+      }else if(this.QATheme ==""){
+        this.errorMessage ='表題を設定してください。';
+        this.errorDialog=true;
+      }else if(this.QAContents ==""){
+        this.errorMessage ='質問内容を設定してください。';
+        this.errorDialog=true;
+      }else {
+      this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate);
+      this.respondentEmployeeId=this.projectMemberLists.find(m => m.name === this.respondent)?.id;
+      this.isLoading= true;
       const res= await axios.post('https://backapp-serita-saisyu.m3harbor.net/api/issueQA',{
       projectId:this.selectedProjectId,
       issueDate:this.issueDate,
@@ -231,13 +261,16 @@ export const useProjectStore = defineStore('project', {
       QAContents:this.QAContents
      })
      if(res.status == 200 ){
-        this.message = "質問を起票しました。";
+        this.resultMessage = "質問を起票しました。";
         this.dialog  = true;
+        this.isLoading= false;
       }else{
-        this.message = "質問を起票できませんでした。管理者にお問い合わせください。";
+        this.resultMmessage = "質問を起票できませんでした。管理者にお問い合わせください。";
         this.dialog  = true;
+        this.isLoading= false;
       }
-     },
+     }
+    },
 
     getDate(){
      return new Date().toISOString().slice(0,10);
@@ -254,42 +287,55 @@ export const useProjectStore = defineStore('project', {
     },
 
     async AnswerQA(){
-      if(this.QAContents == ""){
-        this.message ='質問内容を設定してください。';
-        this.dialog=true;
-      }
-
       this.answerDate=this.getDate();
-      if(this.answerDeadDate !=null && this.convertedAnswerDeadDate<this.answerDate){
-        this.message ='回答期限を本日以降に設定してください。';
-        this.dialog=true;
-      }else if(this.answerDeadDate !=null && this.answerDate <= this.convertedAnswerDeadDate){
-        this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate);
-      }
+      this.convertedAnswerDeadDate =this.convertDate(this.answerDeadDate);
 
-      if (this.respondent !=""){
-          this.respondentEmployeeId=this.projectMemberLists.find(m => m.name === this.respondent)?.id;
+      if(this.QAContents == ""){
+        this.errorMessage ='質問内容を設定してください。';
+        this.errorDialog=true;
       }
-      this.isLoading=true;
-      const res =await  axios.post('https://backapp-serita-saisyu.m3harbor.net/api/answerQA',{
-      questionId:this.selectedQuestionId,
-      answerDate:this.answerDate,
-      answerDeadDate:this.convertedAnswerDeadDate ?? null,
-      respondentEmployeeId:this.respondentEmployeeId ?? null,
-      QATheme:this.selectedQuestionList[0].QATheme,
-      QAContents:this.QAContents
-      })
-      if(res.status == 200 ){
-        this.message = "回答を送信しました。";
-        this.dialog  = true;
+      else if(this.answerDeadDate !=null && this.convertedAnswerDeadDate<this.answerDate){
+        this.errorMessage ='回答期限を本日以降に設定してください。';
+        this.errorDialog=true;
+      }else  if(this.answerDeadDate != null && this.respondent ==""){
+        this.errorMessage ='回答希望者を設定してください。';
+        this.errorDialog=true;
       }else{
-        this.message = "回答を送信できませんでした。管理者にお問い合わせください。";
-        this.dialog  = true;
+        if(this.respondent !=""){
+          this.respondentEmployeeId=this.projectMemberLists.find(m => m.name === this.respondent)?.id;
+        }
+        this.isLoading= true;
+        const res =await  axios.post('https://backapp-serita-saisyu.m3harbor.net/api/answerQA',{
+            questionId:this.selectedQuestionId,
+            answerDate:this.answerDate,
+            answerDeadDate:this.convertedAnswerDeadDate ?? null,
+            respondentEmployeeId:this.respondentEmployeeId ?? null,
+            QATheme:this.selectedQuestionList[0].QATheme,
+            QAContents:this.QAContents
+          })
+          if(res.status == 200 ){
+            this.resultMessage = "回答を送信しました。";
+            this.dialog  = true;
+            this.isLoading=false;
+          }else{
+            this.resultMessage = "回答を送信できませんでした。管理者にお問い合わせください。";
+            this.dialog  = true;
+            this.isLoading=false;
+          }
       }
     },
 
+
+
+
+
+
+
+
+
     backtoQAMenu(){
       this.selectedQuestionList=[];
+      this.selectedAnswerLists=[];
       this.answerCompany=[];
       this.answerDepartment=[];
       this.respondent=[];

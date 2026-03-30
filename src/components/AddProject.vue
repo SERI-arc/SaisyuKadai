@@ -42,6 +42,19 @@ projectStore.getProject()
         <v-row justify="center" class="btn">
           <Router-link to="/SelectProject" class="Link"><v-btn size="large" rounded="pill">戻る</v-btn></Router-link>
         </v-row>
+        <v-dialog v-model="projectStore.addProjectDialog" max-width="400">
+        <v-card>
+            <v-card-title class="headline">メッセージ</v-card-title>
+                <v-card-text>{{ projectStore.addProjectDialogMessage }}</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" variant="text" @click="projectStore.addProjectDialog = false">
+               閉じる
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
       </v-container>
     </v-main>
   </v-app>

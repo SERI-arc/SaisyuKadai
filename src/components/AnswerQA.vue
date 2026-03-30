@@ -90,6 +90,7 @@ const employeeList = computed(() => {
 })
 
 
+
 </script>
 <template>
   <v-app>
@@ -128,7 +129,7 @@ const employeeList = computed(() => {
         <v-row>
             <v-col cols="12">
              <v-card>
-              <v-card-text >起票者: {{selectedQuestionList?.[0]?.issuerName}}</v-card-text>
+              <v-card-text class="issuueEmployee" >起票者: {{selectedQuestionList?.[0]?.issuerName}}</v-card-text>
               <v-card-text >  {{ selectedQuestionList?.[0]?.QAContents}}</v-card-text>
              </v-card>
             </v-col>
@@ -137,7 +138,7 @@ const employeeList = computed(() => {
          <v-row>
             <v-col class="mt-6" cols="12" v-for="selectedAnswerList in selectedAnswerLists" v-bind:key="selectedAnswerList">
             <v-card >
-              <v-card-text >回答者: {{selectedAnswerList.answerEmployeeName}}</v-card-text>
+              <v-card-text class="answerEmployee"  >回答者: {{selectedAnswerList.answerEmployeeName}}</v-card-text>
               <v-card-text >{{selectedAnswerList.QAContents}}</v-card-text>
             </v-card>
             </v-col>
@@ -162,10 +163,30 @@ const employeeList = computed(() => {
         </v-col>
         </v-row>
         </div>
+        <v-dialog v-model="projectStore.errorDialog" max-width="400">
+          <v-card>
+            <v-card-title class="headline">メッセージ</v-card-title>
+                <v-card-text >{{ projectStore.errorMessage }}</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" variant="text" @click="projectStore.errorDialog = false">
+               閉じる
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="projectStore.isLoading" max-width="400" >
+          <v-card >
+            <div class="text-center" >
+                <v-progress-circular :size="50" color="purple" indeterminate ></v-progress-circular>
+                <v-card-text >送信中です...</v-card-text>
+            </div>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="projectStore.dialog" max-width="400">
         <v-card>
             <v-card-title class="headline">メッセージ</v-card-title>
-            <v-card-text>{{ projectStore.message }}</v-card-text>
+                <v-card-text>{{ projectStore.resultMessage }}</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="primary" variant="text" @click="projectStore.dialog = false">
@@ -188,4 +209,13 @@ const employeeList = computed(() => {
   padding-top:1rem ;
 }
 
+.answerEmployee{
+  border-bottom: 1px solid black;
+  background-color:mintcream;
+}
+
+.issuueEmployee{
+  border-bottom: 1px solid black;
+  background-color:rgb(231, 213, 231);
+}
 </style>

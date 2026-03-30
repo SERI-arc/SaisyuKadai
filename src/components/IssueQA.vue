@@ -130,20 +130,42 @@ watch(()=>projectStore.answerCompany,()=>{
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="内容を入力して下さい" v-model="projectStore.QAContents"></v-text-field>
+            <v-textarea label="内容を入力して下さい" v-model="projectStore.QAContents"></v-textarea>
           </v-col>
         </v-row>
         </v-card>
         <div class="btn">
-        <v-row justify="center">
-         <Router-link to="/QAMenu" class="Link"><v-btn class="ml-3" size="large" rounded="pill" @click="projectStore.backtoQAMenu">戻る</v-btn></Router-link>
-         <v-col cols="3"><v-btn class="ml-3" size="large" rounded="pill" @click="issueQA">起票する</v-btn></v-col>
+        <v-row justify="center" align="center" >
+          <v-col cols="3" class="d-flex justify-center">
+            <Router-link to="/QAMenu" class="Link"><v-btn class="ml-3" size="large" rounded="pill" @click="projectStore.backtoQAMenu">戻る</v-btn></Router-link>
+          </v-col>
+         <v-col cols="3" class="d-flex justify-center"><v-btn class="ml-3" size="large" rounded="pill" @click="issueQA">起票する</v-btn></v-col>
         </v-row>
         </div>
+        <v-dialog v-model="projectStore.errorDialog" max-width="400">
+          <v-card>
+            <v-card-title class="headline">メッセージ</v-card-title>
+                <v-card-text >{{ projectStore.errorMessage }}</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" variant="text" @click="projectStore.errorDialog = false">
+               閉じる
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="projectStore.isLoading" max-width="400" >
+          <v-card >
+            <div class="text-center" >
+                <v-progress-circular :size="50" color="purple" indeterminate ></v-progress-circular>
+                <v-card-text >送信中です...</v-card-text>
+            </div>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="projectStore.dialog" max-width="400">
         <v-card>
             <v-card-title class="headline">メッセージ</v-card-title>
-            <v-card-text>{{ projectStore.message }}</v-card-text>
+                <v-card-text>{{ projectStore.resultMessage }}</v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="primary" variant="text" @click="projectStore.dialog = false">
@@ -152,6 +174,7 @@ watch(()=>projectStore.answerCompany,()=>{
             </v-card-actions>
           </v-card>
         </v-dialog>
+
       </v-container>
     </v-main>
   </v-app>
@@ -163,6 +186,10 @@ watch(()=>projectStore.answerCompany,()=>{
 
 .btn{
   padding-top:1rem ;
+}
+
+.text-center{
+  padding-top:1rem;
 }
 
 </style>
