@@ -218,4 +218,8 @@ const employeeList = computed(() => {
   border-bottom: 1px solid black;
   background-color:rgb(231, 213, 231);
 }
+
+.text-center{
+  padding-top:1rem;
+}
 </style>
